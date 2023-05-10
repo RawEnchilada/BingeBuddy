@@ -1,0 +1,63 @@
+.list-container{
+    color: var(--list-foreground);
+    display: grid;
+    grid-template-columns: 1fr 14fr 1fr;
+    align-items: center;
+    margin-bottom: 1.3rem;
+}
+
+.list{
+    overflow-x: scroll;
+    display: flex;
+    grid-row: 2;
+    grid-column: 1/4;
+    padding: 1rem 2rem;
+}
+
+.list>*{
+    /* needed in order to have same size cards in the list */
+    display: flex;
+}
+
+.title{
+    font-size: 1.5em;
+    font-weight: 900;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+    grid-row : 1;
+    grid-column: 1/4;
+}
+
+.arrow{
+    height:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.arrow:hover{
+    cursor: pointer;
+}
+
+.arrow>svg{
+    height: 5rem;
+}
+
+.arrow.left{
+    grid-column: 1;
+    grid-row: 2;
+    background-image: linear-gradient(to right, var(--document-background), transparent);
+}
+
+.arrow.left>svg{
+    transform-origin: 0%;
+}
+
+.arrow.right{
+    grid-column: 3;
+    grid-row: 2;
+    background-image: linear-gradient(to left, var(--document-background), transparent);
+}
+
+.arrow.right>svg{
+    transform-origin: 50%;
+}

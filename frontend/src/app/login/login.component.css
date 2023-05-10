@@ -1,0 +1,15 @@
+#login-view{
+    margin:20% auto;
+    max-width: max-content;
+}
+
+.logo{
+    font-size: 2rem;
+    margin-bottom: 2em;
+    text-align: center;
+}
+
+#login-view input{
+    margin-right: 1em;
+}
+

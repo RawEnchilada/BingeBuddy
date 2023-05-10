@@ -1,0 +1,7 @@
+<div id="login-view">
+    <div class="logo">Binge Buddy</div>
+    <div>
+        <input type="password" placeholder="Password" [(ngModel)]="password" (keyup.enter)="login()" />
+        <button (click)="login()">Login</button>
+    </div>
+</div>

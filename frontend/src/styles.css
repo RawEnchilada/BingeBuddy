@@ -1,0 +1,73 @@
+:root{
+    --document-background: #000000;
+    --accent-background: #313131;
+    --accent-foreground: #fff;
+    --active-background: #e1bc4c;
+    --active-background-darker: #9e8436;
+    --active-foreground: #ffffff;
+    --list-foreground: #e1bc4c;
+    --card-background: #313131;
+    --card-foreground: #ffffff;
+}
+
+html{
+    height: 100%;
+}
+
+html, body{
+    margin: 0;
+    padding: 0;
+    background-color: var(--document-background);
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 600;
+}
+
+
+.logo{
+    margin: 0 1em;
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: -webkit-linear-gradient(var(--active-background),var(--active-background-darker));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+}
+
+.hidden{
+    display: none !important;
+}
+
+button{
+    background-color: var(--active-background);
+    color: var(--active-foreground);
+    border: none;
+    border-radius: 5px;
+    padding: 0.5em;
+    font-size: 1em;
+    font-weight: 600;
+    white-space:break-spaces;
+    max-width: 10em;
+}
+
+button:hover, button:focus{
+    cursor: pointer;
+    box-shadow: inset 0 0 5px 0 rgba(0,0,0,0.5);
+}
+
+input{
+    background-color: var(--accent-background);
+    color: var(--accent-foreground);
+    border: none;
+    border-radius: 5px;
+    padding: 0.5em;
+    font-size: 1em;
+    font-weight: 600;
+    white-space:break-spaces;
+    max-width: 10em;
+}
+
+input:hover, input:focus{
+    cursor: text;
+    box-shadow: inset 0 0 5px 0 rgba(0,0,0,0.5);
+}

@@ -1,0 +1,36 @@
+#navbar{
+    width: 100%;
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: var(--accent-background);
+    color: var(--accent-foreground);
+}
+
+
+#navbar>a{
+    color: var(--accent-foreground);
+    text-decoration: none;
+    padding: 1em;
+}
+
+#navbar>*:hover{
+    cursor: pointer;
+}
+
+#navbar>a:hover, #navbar>a:active{
+    background-color: var(--active-background);
+    color: var(--active-foreground);
+    box-shadow: inset 0px 0px 5px 0px rgba(0,0,0,0.75);
+    border-radius: 5px;
+}
+
+#navbar>a.active{
+    background-color: var(--active-background);
+    color: var(--active-foreground);
+}
+
+#navbar>*:first-child{
+    margin-right: auto;
+}

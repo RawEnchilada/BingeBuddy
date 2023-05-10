@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import api from 'src/api/api';
+import { computed } from 'mobx-angular';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'BingeBuddy';
+    @computed get isAuthorized(): boolean{
+        return api.isAuthorized;
+    } 
 }
