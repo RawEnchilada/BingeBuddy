@@ -1,7 +1,11 @@
 <div id="login-view">
     <div class="logo">Binge Buddy</div>
-    <div>
-        <input type="password" placeholder="Password" [(ngModel)]="password" (keyup.enter)="login()" />
+    <div class="row">
+        <div id="show-password-box" class="input" [class.active]="showPassword" (click)="toggleShowPassword()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <input [type]="showPassword?'text':'password'" placeholder="Password" [(ngModel)]="password" (keyup.enter)="login()"  />
         <button (click)="login()">Login</button>
     </div>
+    <div class="error" *ngIf="error">{{ error }}</div>
 </div>

@@ -15,6 +15,7 @@ class API {
     get baseUrl(): string{return environment.apiUrl};
 
     @observable currentSession: string = '';
+    private account: string = '19390017';
 
     // Local storage management and session expiration.
     constructor() {
@@ -88,7 +89,7 @@ class API {
         }
         else{
             console.error("Failed to create session.");
-            return '';
+            throw data;
         }
     }
 
@@ -111,6 +112,42 @@ class API {
         }
         return response.status == 200;
     }
+
+    /**
+     * Add a movie or tv show to the favourites list.
+     * @param id
+     */
+    async addToFavourites(id: number): Promise<boolean>{
+        const response = await fetch(`${this.baseUrl}/account/${this.account}/favourites`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Session-Token': this.currentSession
+            },
+            body: JSON.stringify({'media_id':id})
+        });
+        return response.status == 200;
+    }
+
+    /**
+     * Add a movie or tv show to the watchlist.
+     * @param id
+     */
+    async addToWatchlist(id: number): Promise<boolean>{
+        const response = await fetch(`${this.baseUrl}/account/${this.account}/watchlist`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Session-Token': this.currentSession
+            },
+            body: JSON.stringify({'media_id':id})
+        });
+        return response.status == 200;
+    }
+
+
 
     movies = {
         parent: api,
@@ -185,7 +222,41 @@ class API {
             });
             const data = await response.json();
             return data;
+        },
+        
+        /**
+         * Get the watchlist.
+         */
+        async getWatchlist(): Promise<any>{
+            const response = await fetch(`${this.parent.baseUrl}/account/${this.parent.account}/watchlist/movies`,{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Session-Token': this.parent.currentSession
+                }
+            });
+            const data = await response.json();
+            return data;
+        },
+
+        /**
+         * Get favourites.
+         */
+        async getFavourites(): Promise<any>{
+            const response = await fetch(`${this.parent.baseUrl}/account/${this.parent.account}/favorite/movies`,{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Session-Token': this.parent.currentSession
+                }
+            });
+            const data = await response.json();
+            return data;
         }
+
+
     }.init(this)
 
 
@@ -255,6 +326,38 @@ class API {
          */
         async recommended(showId:number,page:number): Promise<any>{
             const response = await fetch(`${this.parent.baseUrl}/tv/${showId}/recommendations?language=en-US&page=${page}`,{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Session-Token': this.parent.currentSession
+                }
+            });
+            const data = await response.json();
+            return data;
+        },
+
+        /**
+         * Get the watchlist.
+         */
+        async getWatchlist(): Promise<any>{
+            const response = await fetch(`${this.parent.baseUrl}/account/${this.parent.account}/watchlist/tv`,{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Session-Token': this.parent.currentSession
+                }
+            });
+            const data = await response.json();
+            return data;
+        },
+
+        /**
+         * Get favourites.
+         */
+        async getFavourites(): Promise<any>{
+            const response = await fetch(`${this.parent.baseUrl}/account/${this.parent.account}/favorite/tv`,{
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

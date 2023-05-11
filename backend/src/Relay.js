@@ -19,7 +19,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.options('*', (req, res) => {
-    res.set(headers).status(200).send("OK");
+    res.set(headers).status(200).json({'result':'OK'});
 });
 
 app.post('/session', (req, res) => {
@@ -33,7 +33,7 @@ app.post('/session', (req, res) => {
         res.set(headers).status(200).json({'sessionToken': sessionToken});
     } else {
         console.log(`Incorrect password provided while trying to create session`);
-        res.set(headers).status(403).send('Incorrect password');
+        res.set(headers).status(403).json({'error':'Incorrect password'});
     }
 });
 
@@ -41,16 +41,16 @@ app.delete('/session', (req, res) => {
     const sessionToken = req.headers['session-token'];
     if (sessionToken == null) {
         console.log(`No session token provided while trying to revoke session`);
-        res.set(headers).status(403).send('Session token not provided');
+        res.set(headers).status(403).json({'error':'Session token not provided'});
         return;
     }
 
     if (sessionManager.revokeSession(sessionToken)) {
         console.log(`Revoking session: ${sessionToken}`);
-        res.set(headers).status(200).send('Session revoked');
+        res.set(headers).status(200).json({'error':'Session revoked'});
     } else {
         console.log(`Invalid session token provided while trying to revoke session: ${sessionToken}`);
-        res.set(headers).status(403).send('Invalid session token');
+        res.set(headers).status(403).json({'error':'Invalid session token'});
     }
 });
 
@@ -58,7 +58,7 @@ app.get('/session', (req, res) => {
     const sessionToken = req.headers['session-token'];
     if (sessionToken == null) {
         console.log(`No session token provided while trying to check session`);
-        res.set(headers).status(403).send('Session token not provided');
+        res.set(headers).status(403).json({'error':'Session token not provided'});
         return;
     }
 
@@ -85,7 +85,7 @@ app.get('*', async (req, res) => {
     const sessionToken = req.headers['session-token'];
     if (sessionToken == null) {
         console.log(`No session token provided while trying to relay request`);
-        res.set(headers).status(403).send('Session token not provided');
+        res.set(headers).status(403).json({'error':'Session token not provided'});
         return;
     }
     switch(sessionManager.checkToken(sessionToken)){
@@ -97,7 +97,7 @@ app.get('*', async (req, res) => {
             } else {
                 redirectUrl += `?api_key=${config.apiKey}`;
             }
-            console.log(`Redirecting to ${redirectUrl}`);
+            console.log(`Relaying request from ${sessionToken} of ${redirectUrl}`);
 
             fetch(redirectUrl, {
                 method: 'GET',
@@ -106,23 +106,24 @@ app.get('*', async (req, res) => {
                 }
             }).then(async (response) => {
                 if (response.ok) {
-                    res.set(headers).status(200).json(await response.json());
+                    let data = await response.json();
+                    res.set(headers).status(200).json(data);
                 } else {
-                    return res.set(headers).status(response.status).send(response.statusText);
+                    return res.set(headers).status(response.status).json({'result':'response.statusText'});
                 }
             }).catch(error => {
-                return res.set(headers).status(500).send(error.toString());
+                return res.set(headers).status(500).json({'error':error.toString()});
             });
             break;
 
         case SessionStatus.expired:
             console.log(`Session token expired: ${sessionToken}, refusing to relay request`);
-            res.set(headers).status(403).send('Session token expired');
+            res.set(headers).status(403).json({'error':'Session token expired'});
             break;
 
         case SessionStatus.invalid:
             console.log(`Invalid session token provided while trying to relay request: ${sessionToken}, refusing to relay request`);
-            res.set(headers).status(403).send('Invalid session token');
+            res.set(headers).status(403).json({'error':'Invalid session token'});
             break;
     }
 });

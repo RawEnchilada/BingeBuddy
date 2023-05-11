@@ -1,6 +1,14 @@
 <div class="card" [title]="fullTitle">
     <img [src]="imagePath" alt="Avatar" class="avatar" height="200">
-    <div class="ratings">
+    <div class="sidebar">
+        <div class="watchlist-controls">
+            <button class="watchlist-button" (click)="toggleWatchlist()">
+                <svg viewBox="0 0 24 24">
+                    <path *ngIf="isInWatchlist" d="M4 6 L8 10 L4 14 L8 10 L4 6 L8 10 L4 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(0,0,0,0)"/>
+                    <path *ngIf="!isInWatchlist" d="M4 6 L8 10 L4 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(0,0,0,0)"/>
+                </svg>
+            </button>
+        </div>
         <div class="rating">
             <svg viewBox="0 0 24 24">
                 <path d="M12 2 L15.09 8.09 L22 9 L16.5 14.5 L18.36 21 L12 17.77 L5.64 21 L7.5 14.5 L2 9 L8.91 8.09 L12 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(0,0,0,0)"/>

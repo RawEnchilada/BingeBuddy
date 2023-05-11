@@ -8,6 +8,8 @@
     --list-foreground: #e1bc4c;
     --card-background: #313131;
     --card-foreground: #ffffff;
+    --error-background: #f79797;
+    --error-foreground: #da1a1a;
 }
 
 html{
@@ -21,7 +23,6 @@ html, body{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: 600;
 }
-
 
 .logo{
     margin: 0 1em;
@@ -43,7 +44,7 @@ button{
     color: var(--active-foreground);
     border: none;
     border-radius: 5px;
-    padding: 0.5em;
+    padding: 0.5rem;
     font-size: 1em;
     font-weight: 600;
     white-space:break-spaces;
@@ -55,19 +56,24 @@ button:hover, button:focus{
     box-shadow: inset 0 0 5px 0 rgba(0,0,0,0.5);
 }
 
-input{
+input, .input{
     background-color: var(--accent-background);
     color: var(--accent-foreground);
     border: none;
     border-radius: 5px;
-    padding: 0.5em;
+    padding: 0.5rem;
     font-size: 1em;
     font-weight: 600;
     white-space:break-spaces;
     max-width: 10em;
 }
-
-input:hover, input:focus{
+input[type="text"], input[type="password"]{
     cursor: text;
+}
+input[type="checkbox"]{
+    cursor: pointer;
+}
+
+input:hover, input:focus, .input:hover, .input:focus{
     box-shadow: inset 0 0 5px 0 rgba(0,0,0,0.5);
 }

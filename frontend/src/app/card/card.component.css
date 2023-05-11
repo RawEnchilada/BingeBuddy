@@ -21,7 +21,7 @@
     border-radius: 5px;
 }
 
-.card>.ratings{
+.card>.sidebar{
     grid-column: 2;
     grid-row: 1;
     padding: 0.5rem 0.5rem 0.5rem 1rem;
@@ -32,7 +32,7 @@
     text-align: center;
 }
 
-.card>.ratings>.rating{
+.card>.sidebar>.rating{
     min-width: 2rem;
 }
 
