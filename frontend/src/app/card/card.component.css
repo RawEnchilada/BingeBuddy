@@ -21,7 +21,7 @@
     border-radius: 5px;
 }
 
-.card>.sidebar{
+.sidebar{
     grid-column: 2;
     grid-row: 1;
     padding: 0.5rem 0.5rem 0.5rem 1rem;
@@ -32,12 +32,27 @@
     text-align: center;
 }
 
-.card>.sidebar>.rating{
+.rating{
+    margin-top: 0.5em;
     min-width: 2rem;
 }
+
+
 
 .card>.title{
     padding: 0.5rem 0.5rem 0 0.5rem;
     grid-column: 1/3;
     grid-row: 2;
+}
+
+.list-button{
+    cursor:pointer;
+}
+
+.list-button:hover{
+    color: var(--error-background)
+}
+
+.added{
+    color: var(--active-background);
 }

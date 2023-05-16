@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { computed } from 'mobx';
-import { List, myList } from 'src/store/mylists';
+import api from 'src/api/api';
+import IList from 'src/store/ilist';
+import myList from 'src/store/mylists';
 
 @Component({
   selector: 'app-card',
@@ -11,10 +13,10 @@ export class CardComponent implements OnInit {
 
 
     @Input() data: any = null;
-    @Input() type: string = "movie";
+    @Input() type: string = "movies";
 
-    watchlist!: List;
-    favorites!: List;
+    watchlist!: IList;
+    favourites!: IList;
 
     private maxTitleLength: number = 40;
 
@@ -23,42 +25,86 @@ export class CardComponent implements OnInit {
     imagePath: string = "";
     rating: number = 0;
     voteCount: number = 0;
+
+    isInWatchlist: boolean = false;
+    isInFavourites: boolean = false;
     
     
     ngOnInit(): void {
-        this.fullTitle = (this.data.title ? this.data.title : this.data.name);
-        this.title = this.fullTitle;
-        if(this.title.length > this.maxTitleLength){
-            this.title = this.title.substring(0, this.maxTitleLength - 3) + '...';
-        }
-        this.imagePath = this.data.poster_path ? `https://image.tmdb.org/t/p/w500${this.data.poster_path}` : 'assets/missing.jpg';
-        this.voteCount = this.data.vote_count;
-        this.rating = this.data.vote_average;
+        if(this.data != null && api.isAuthorized){
+            this.fullTitle = (this.data.title ? this.data.title : this.data.name);
+            this.title = this.fullTitle;
+            if(this.title.length > this.maxTitleLength){
+                this.title = this.title.substring(0, this.maxTitleLength - 3) + '...';
+            }
+            this.imagePath = this.data.poster_path ? `https://image.tmdb.org/t/p/w500${this.data.poster_path}` : 'assets/missing.jpg';
+            this.voteCount = this.data.vote_count;
+            this.rating = this.data.vote_average;
+    
+            if(this.type === 'movies'){
+                this.watchlist = myList.movies.watchlist;
+                this.favourites = myList.movies.favourites;
+            }else{
+                this.watchlist = myList.shows.watchlist;
+                this.favourites = myList.shows.favourites;
+            }
 
-        if(this.type === 'movie'){
-            this.watchlist = myList.movies.watchlist;
-            this.favorites = myList.movies.favorites;
-        }else{
-            this.watchlist = myList.shows.watchlist;
-            this.favorites = myList.shows.favorites;
+            this.getIsInWatchlist();
+            this.getIsInFavourites();
         }
 
     }
 
     toggleWatchlist(){
-        if(this.isInWatchlist){
-            //this.watchlist.remove(this.data.id);
-        }else{
-            this.watchlist.add(this.data.id);
-        }
+        (async () => {
+            if(this.isInWatchlist){
+                await this.watchlist.remove(this.data.id);
+            }else{
+                const item = {
+                    id: this.data.id,
+                    title: this.data.title,
+                    name: this.data.name,
+                    poster_path: this.data.poster_path,
+                    vote_average: this.data.vote_average,
+                    vote_count: this.data.vote_count
+                };
+                await this.watchlist.add(item);
+            }
+        }).bind(this)().then(()=>{
+            this.getIsInWatchlist();
+        });
     }
 
-    @computed get isInWatchlist(): boolean{
-        return this.watchlist.list.find((item: any) => item.id === this.data.id) !== undefined;
+    toggleFavourite(){
+        (async () => {
+            if(this.isInFavourites){
+                await this.favourites.remove(this.data.id);
+            }else{
+                const item = {
+                    id: this.data.id,
+                    title: this.data.title,
+                    name: this.data.name,
+                    poster_path: this.data.poster_path,
+                    vote_average: this.data.vote_average,
+                    vote_count: this.data.vote_count
+                };
+                await this.favourites.add(item);
+            }
+        }).bind(this)().then(()=>{
+            this.getIsInFavourites();
+        });
     }
 
-    @computed get isInFavorites(): boolean{
-        return this.favorites.list.find((item: any) => item.id === this.data.id) !== undefined;
+    getIsInWatchlist(): boolean{
+        if(!this.watchlist || !this.watchlist.list.find)return false;
+        else this.isInWatchlist = (this.watchlist.list.find((item: any) => item.id === this.data.id) !== undefined);
+        return this.isInWatchlist;
+    }
+
+    getIsInFavourites(): boolean{
+        if(!this.favourites || !this.favourites.list.find)return false;
+        else this.isInFavourites = (this.favourites.list.find((item: any) => item.id === this.data.id) !== undefined);
+        return this.isInFavourites;
     }
 
 

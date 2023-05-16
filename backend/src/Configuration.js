@@ -12,6 +12,9 @@ class Configuration {
         this.port = port;
         this.certificatePath = certificatePath;
         this.keyPath = keyPath;
+        this.requestToken = null;
+        this.authorized = false;
+        this.tmdbSession = null;
     }
 
     static fromFile(path) {

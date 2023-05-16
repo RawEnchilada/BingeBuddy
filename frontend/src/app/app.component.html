@@ -1,7 +1,12 @@
-
-
 <div role="main">
     <app-navbar *ngIf="isAuthorized"></app-navbar>
+    <dialog id="expired-session-dialog" #dialog>
+        <div class="dialog-content">
+            <h1>Session expired</h1>
+            <p>Your session has expired. Please log in again.</p>
+            <button (click)="toLoginView()">OK</button>
+        </div>
+    </dialog>
     <div id="content">
         <router-outlet></router-outlet>
     </div>

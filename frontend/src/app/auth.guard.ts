@@ -8,8 +8,8 @@ export function contentGuard(): CanActivateFn {
         if (api.isAuthorized) {
             return true;
         } else {
-            console.warn('Not authorized, redirecting to login.');
-            window.location.href = '/';
+            console.warn('Not authorized, login again.');
+            //window.location.href = '/'; doesn't work reliably, also might be confusing for the user.
             return false;
         }
     }

@@ -1,1 +1,6 @@
-<p>mylist works!</p>
+<div class="rows">
+    <app-cardlist [sourceFunction]="movies.watchlist.getList.bind(movies.watchlist)" [title]="'Movies on Watchlist'" [type]="'movies'"></app-cardlist>
+    <app-cardlist [sourceFunction]="shows.watchlist.getList.bind(shows.watchlist)" [title]="'Shows on Watchlist'" [type]="'shows'"></app-cardlist>
+    <app-cardlist [sourceFunction]="movies.favourites.getList.bind(movies.favourites)" [title]="'Favourite Movies'" [type]="'movies'"></app-cardlist>
+    <app-cardlist [sourceFunction]="shows.favourites.getList.bind(shows.favourites)" [title]="'Favourite Shows'" [type]="'shows'"></app-cardlist>
+</div>

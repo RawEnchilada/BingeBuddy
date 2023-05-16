@@ -1,30 +1,19 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { computed, makeObservable, observable } from 'mobx';
+import api from 'src/api/api';
+import { CardsView } from '../baseClasses/cardsview.component';
 
 @Component({
-  selector: 'app-cardview',
-  templateUrl: './cardview.component.html',
-  styleUrls: ['./cardview.component.css']
+  selector: 'app-cardlist',
+  templateUrl: './cardlist.component.html',
+  styleUrls: ['./cardlist.component.css']
 })
-export class CardViewComponent implements AfterViewInit, OnDestroy {
-
-    @Input() title: string = 'Movies and Shows';
-    @Input() sourceFunction: (((page:number) => Promise<any>) | null) = null;
+export class CardListComponent extends CardsView implements AfterViewInit, OnDestroy {
 
     @ViewChild('list', {static: false}) list!: ElementRef;
 
-    items: any[] = [];
-
     @observable atStart: boolean = true;
     @observable atEnd: boolean = false;
-
-    private isLoading: boolean = false;
-    private pagesLoaded: number = 0;
-    private maxPages: number = 10;
-
-    constructor() { 
-        makeObservable(this);
-    }
 
     private scroll(amount:number) {
         this.list.nativeElement.scroll({
@@ -52,9 +41,11 @@ export class CardViewComponent implements AfterViewInit, OnDestroy {
      * @param evt
      */
     horizontalScroll(evt:any) {
-        evt.preventDefault();
-        const amountX = evt.deltaY * 2;
-        this.scroll(amountX);
+        if(evt.deltaX == 0){
+            evt.preventDefault();
+            const amountX = evt.deltaY * 2;
+            this.scroll(amountX);
+        }
     }
 
     /**
@@ -71,24 +62,6 @@ export class CardViewComponent implements AfterViewInit, OnDestroy {
         this.scroll(500);
     }
 
-    /**
-     * Load more items.
-     */
-    loadMore() {
-        if (!this.isLoading) {
-            this.isLoading = true;
-            if (this.sourceFunction != null && this.pagesLoaded < this.maxPages) {
-                this.sourceFunction(this.pagesLoaded + 1).then((data:any) => {
-                    this.items = this.items.concat(data.results);
-                    this.maxPages = Math.min(data.total_pages,10);
-                    this.pagesLoaded++;
-                    this.isLoading = false;
-                });
-            }
-        }
-    }
-
-
     ngAfterViewInit() {
         //enable horizontal scrolling
         this.list.nativeElement.addEventListener("wheel", this.horizontalScroll.bind(this));
@@ -100,8 +73,4 @@ export class CardViewComponent implements AfterViewInit, OnDestroy {
         //remove scroll listener
         this.list.nativeElement.removeEventListener("wheel", this.horizontalScroll.bind(this));
     }
-
-
-    
-
 }

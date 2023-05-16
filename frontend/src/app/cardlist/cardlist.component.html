@@ -3,15 +3,20 @@
         {{title}}
     </div>
     <div #list class="list">
-        <app-card *ngFor="let item of items" [data]="item">
-        </app-card>
+        <div *ngIf="items.length > 0">
+            <app-card *ngFor="let item of items" [data]="item" [type]="type">
+            </app-card>
+        </div>
+        <div *ngIf="items.length == 0">
+            No items to show :(
+        </div>
     </div>
-    <div class="arrow left" [class.hidden]="atStart" (click)="scrollLeft()">
+    <div *ngIf="items.length > 0" class="arrow left" [class.hidden]="atStart" (click)="scrollLeft()">
         <svg viewBox="0 0 12 24">
             <path d="M10 2 L2 12 L10 22" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(0,0,0,0)"/>
         </svg>
     </div>
-    <div class="arrow right" [class.hidden]="atEnd" (click)="scrollRight()">
+    <div *ngIf="items.length > 0" class="arrow right" [class.hidden]="atEnd" (click)="scrollRight()">
         <svg viewBox="0 0 12 24">
             <path d="M2 2 L10 12 L2 22" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(0,0,0,0)"/>
         </svg>

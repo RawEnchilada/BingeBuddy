@@ -1,6 +1,6 @@
 <div class="rows">
-    <app-cardview [sourceFunction]="movies.popular.bind(movies)" [title]="'Popular Movies'"></app-cardview>
-    <app-cardview [sourceFunction]="shows.popular.bind(shows)" [title]="'Popular TV Shows'"></app-cardview>
-    <app-cardview [sourceFunction]="movies.top.bind(movies)" [title]="'Top Rated Movies'"></app-cardview>
-    <app-cardview [sourceFunction]="shows.top.bind(shows)" [title]="'Top Rated TV Shows'"></app-cardview>
+    <app-cardlist [sourceFunction]="movies.getPopular.bind(movies)" [title]="'Popular Movies'" [type]="'movies'"></app-cardlist>
+    <app-cardlist [sourceFunction]="shows.getPopular.bind(shows)" [title]="'Popular TV Shows'" [type]="'shows'"></app-cardlist>
+    <app-cardlist [sourceFunction]="movies.getTop.bind(movies)" [title]="'Top Rated Movies'" [type]="'movies'"></app-cardlist>
+    <app-cardlist [sourceFunction]="shows.getTop.bind(shows)" [title]="'Top Rated TV Shows'" [type]="'shows'"></app-cardlist>
 </div>

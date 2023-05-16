@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import myList from 'src/store/mylists';
 
 @Component({
   selector: 'app-mylist',
@@ -6,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./mylist.component.css']
 })
 export class MyListComponent {
-
+    
+    movies = myList.movies;
+    shows = myList.shows;
 }

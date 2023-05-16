@@ -23,7 +23,12 @@ export class LoginComponent {
         
         api.createSession(this.password)
         .then(data => {
-            window.location.href = '/browse';
+            if(data.status == 511){
+                this.error = `User needs to be authorized, please follow this link: ${data.url}`;
+                window.open(data.url);
+            }else{
+                window.location.href = '/browse';
+            }
         }).catch(err => {
             this.error = err.error;
         });

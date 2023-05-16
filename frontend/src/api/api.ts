@@ -4,7 +4,7 @@ import { computed, observable } from "mobx-angular";
 import * as crypto from 'crypto-js';
 
 
-enum SessionStatus{
+export enum SessionStatus{
     Active,
     Expired,
     Invalid
@@ -14,21 +14,60 @@ enum SessionStatus{
 class API {
     get baseUrl(): string{return environment.apiUrl};
 
+    get headers(){
+        return {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Session-Token': this.currentSession
+        };
+    }
+
     @observable currentSession: string = '';
-    private account: string = '19390017';
+    private sessionListeners: ((valid: boolean) => void)[] = [];
 
     // Local storage management and session expiration.
     constructor() {
-        this.currentSession = localStorage.getItem('currentSession') || '';
-        if(this.currentSession === null || this.currentSession === undefined)this.currentSession = '';
+        let token = localStorage.getItem('currentSession') || '';
+        if(token === null || token === undefined)token = '';
+        this.setCurrentSession(token);
         
         // If we have a current session, check if it's expired.
         if(this.currentSession !== ''){
             // Check if the session is valid
             this.checkSessionStatus();
-        }        
+        }
 
         makeObservable(this);
+    }
+
+    /**
+     * Add a session listener.
+     * @param callback
+     */
+    addSessionListener(callback: (valid: boolean) => void){
+        this.sessionListeners.push(callback);
+    }
+
+    /**
+     * Remove a session listener.
+     * @param callback
+     */
+    removeSessionListener(callback: (valid: boolean) => void){
+        const index = this.sessionListeners.indexOf(callback);
+        if(index > -1){
+            this.sessionListeners.splice(index, 1);
+        }
+    }
+
+    /**
+     * Set the current session token and notify listeners.
+     * @param sessionToken
+     */
+    private setCurrentSession(sessionToken: string){
+        this.currentSession = sessionToken;
+        for (let i = 0; i < this.sessionListeners.length; i++) {
+            this.sessionListeners[i](sessionToken !== '');
+        }
     }
 
     /**
@@ -46,22 +85,18 @@ class API {
         // Check if the session is valid
         const response = await fetch(`${this.baseUrl}/session`,{
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Session-Token': this.currentSession
-            }
+            headers: this.headers
         });
         const data = await response.json();
         switch(data.status){
             case 'active':
                 return SessionStatus.Active;
             case 'expired':
-                this.currentSession = '';
+                this.setCurrentSession('');
                 localStorage.removeItem('currentSession');
                 return SessionStatus.Expired;
             default:
-                this.currentSession = '';
+                this.setCurrentSession('');
                 localStorage.removeItem('currentSession');
                 return SessionStatus.Invalid;
         }
@@ -71,7 +106,7 @@ class API {
      * Create a new session.
      * @param password
      */
-    async createSession(password: string): Promise<string>{
+    async createSession(password: string): Promise<any>{
         let passwordHash = crypto.SHA256(password).toString(crypto.enc.Hex);
         const response = await fetch(`${this.baseUrl}/session`,{
             method: 'POST',
@@ -83,11 +118,18 @@ class API {
         });
         const data = await response.json();
         if(response.status == 200){
-            this.currentSession = data.sessionToken;
+            this.setCurrentSession(data.sessionToken);
             localStorage.setItem('currentSession', this.currentSession);
-            return data.sessionToken;
-        }
-        else{
+            return {
+                sessionToken: data.sessionToken,
+                status: 200
+            };
+        }else if(response.status == 511){
+            return {
+                url: data.url,
+                status: 511
+            };
+        }else{
             console.error("Failed to create session.");
             throw data;
         }
@@ -100,50 +142,12 @@ class API {
     async deleteSession(): Promise<boolean>{
         const response = await fetch(`${this.baseUrl}/session`,{
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Session-Token': this.currentSession
-            }
+            headers: this.headers
         });
         if(response.status == 200){
-            this.currentSession = '';
+            this.setCurrentSession('');
             localStorage.removeItem('currentSession');
         }
-        return response.status == 200;
-    }
-
-    /**
-     * Add a movie or tv show to the favourites list.
-     * @param id
-     */
-    async addToFavourites(id: number): Promise<boolean>{
-        const response = await fetch(`${this.baseUrl}/account/${this.account}/favourites`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Session-Token': this.currentSession
-            },
-            body: JSON.stringify({'media_id':id})
-        });
-        return response.status == 200;
-    }
-
-    /**
-     * Add a movie or tv show to the watchlist.
-     * @param id
-     */
-    async addToWatchlist(id: number): Promise<boolean>{
-        const response = await fetch(`${this.baseUrl}/account/${this.account}/watchlist`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Session-Token': this.currentSession
-            },
-            body: JSON.stringify({'media_id':id})
-        });
         return response.status == 200;
     }
 
@@ -155,18 +159,15 @@ class API {
             this.parent = parent;
             return this;
         },
+
         /**
          * Get the list of top movies. 
          * @param page  The page number to get.
          */
-        async top(page:number): Promise<any>{
+        async getTop(page:number): Promise<any>{
             const response = await fetch(`${this.parent.baseUrl}/movie/top_rated?language=en-US&page=${page}`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
@@ -176,14 +177,10 @@ class API {
          * Get the list of upcoming movies.
          * @param page  The page number to get.
          */
-        async upcoming(page:number): Promise<any>{
+        async getUpcoming(page:number): Promise<any>{
             const response = await fetch(`${this.parent.baseUrl}/movie/upcoming?language=en-US&page=${page}`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
@@ -193,14 +190,10 @@ class API {
          * Get the list of popular movies.
          * @param page  The page number to get.
          */
-        async popular(page:number): Promise<any>{
+        async getPopular(page:number): Promise<any>{
             const response = await fetch(`${this.parent.baseUrl}/movie/popular?language=en-US&page=${page}`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
@@ -211,49 +204,89 @@ class API {
          * @param movieId   The movie id to get recommendations for.
          * @param page  The page number to get.
          */
-        async recommended(movieId:number,page:number): Promise<any>{
+        async getRecommended(movieId:number,page:number): Promise<any>{
             const response = await fetch(`${this.parent.baseUrl}/movie/${movieId}/recommendations?language=en-US&page=${page}`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
         },
         
         /**
-         * Get the watchlist.
+         * Get the movies watchlist.
          */
         async getWatchlist(): Promise<any>{
-            const response = await fetch(`${this.parent.baseUrl}/account/${this.parent.account}/watchlist/movies`,{
+            const response = await fetch(`${this.parent.baseUrl}/movies/watchlist`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
         },
 
         /**
-         * Get favourites.
+         * Get favourite movies.
          */
         async getFavourites(): Promise<any>{
-            const response = await fetch(`${this.parent.baseUrl}/account/${this.parent.account}/favorite/movies`,{
+            const response = await fetch(`${this.parent.baseUrl}/movies/favourites`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
+        },
+
+        /**
+         * Add a movie to the favourites list.
+         * @param id
+         */
+        async addToFavourites(data: any): Promise<boolean>{
+            const response = await fetch(`${this.parent.baseUrl}/movies/favourites`,{
+                method: 'POST',
+                headers: this.parent.headers,
+                body: JSON.stringify(data)
+            });
+            return response.status == 200;
+        },
+    
+        /**
+         * Add a movie to the watchlist.
+         * @param id
+         */
+        async addToWatchlist(data: any): Promise<boolean>{
+            const response = await fetch(`${this.parent.baseUrl}/movies/watchlist`,{
+                method: 'POST',
+                headers: this.parent.headers,
+                body: JSON.stringify(data)
+            });
+            return response.status == 200;
+        },
+
+        /**
+         * Remove a movie from the favourites list.
+         * @param id
+         */
+        async removeFromFavourites(id: number): Promise<boolean>{
+            const response = await fetch(`${this.parent.baseUrl}/movies/favourites`,{
+                method: 'DELETE',
+                headers: this.parent.headers,
+                body: JSON.stringify({'id':id})
+            });
+            return response.status == 200;
+        },
+
+        /**
+         * Remove a movie from the watchlist.
+         * @param id
+         */
+        async removeFromWatchlist(id: number): Promise<boolean>{
+            const response = await fetch(`${this.parent.baseUrl}/movies/watchlist`,{
+                method: 'DELETE',
+                headers: this.parent.headers,
+                body: JSON.stringify({'id':id})
+            });
+            return response.status == 200;
         }
 
 
@@ -265,21 +298,16 @@ class API {
         init(parent:API){
             this.parent = parent;
             return this;
-        },
-        
+        },        
 
         /**
          * Get the list of top shows.
          * @param page  The page number to get.
          */
-        async top(page:number): Promise<any>{
+        async getTop(page:number): Promise<any>{
             const response = await fetch(`${this.parent.baseUrl}/tv/top_rated?language=en-US&page=${page}`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
@@ -289,14 +317,10 @@ class API {
          * Get the list of popular shows.
          * @param page  The page number to get.
          */
-        async popular(page:number): Promise<any>{
+        async getPopular(page:number): Promise<any>{
             const response = await fetch(`${this.parent.baseUrl}/tv/popular?language=en-US&page=${page}`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
@@ -306,14 +330,10 @@ class API {
          * Get the list of upcoming shows.
          * @param page  The page number to get.
          */
-        async upcoming(page:number): Promise<any>{
+        async getUpcoming(page:number): Promise<any>{
             const response = await fetch(`${this.parent.baseUrl}/tv/on_the_air?language=en-US&page=${page}`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
@@ -324,50 +344,93 @@ class API {
          * @param showId    The show id to get recommendations for.
          * @param page  The page number to get.
          */
-        async recommended(showId:number,page:number): Promise<any>{
+        async getRecommended(showId:number,page:number): Promise<any>{
             const response = await fetch(`${this.parent.baseUrl}/tv/${showId}/recommendations?language=en-US&page=${page}`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
         },
 
         /**
-         * Get the watchlist.
+         * Get the shows watchlist.
          */
         async getWatchlist(): Promise<any>{
-            const response = await fetch(`${this.parent.baseUrl}/account/${this.parent.account}/watchlist/tv`,{
+            const response = await fetch(`${this.parent.baseUrl}/shows/watchlist`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
         },
 
         /**
-         * Get favourites.
+         * Get favourite shows.
          */
         async getFavourites(): Promise<any>{
-            const response = await fetch(`${this.parent.baseUrl}/account/${this.parent.account}/favorite/tv`,{
+            const response = await fetch(`${this.parent.baseUrl}/shows/favourites`,{
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Session-Token': this.parent.currentSession
-                }
+                headers: this.parent.headers
             });
             const data = await response.json();
             return data;
+        },
+
+
+
+        /**
+         * Add a tv show to the favourites list.
+         * @param id
+         */
+        async addToFavourites(data: any): Promise<boolean>{
+            const response = await fetch(`${this.parent.baseUrl}/shows/favourites`,{
+                method: 'POST',
+                headers: this.parent.headers,
+                body: JSON.stringify(data)
+            });
+            return response.status == 200;
+        },
+    
+        /**
+         * Add a tv show to the watchlist.
+         * @param id
+         */
+        async addToWatchlist(data: any): Promise<boolean>{
+            const response = await fetch(`${this.parent.baseUrl}/shows/watchlist`,{
+                method: 'POST',
+                headers: this.parent.headers,
+                body: JSON.stringify(data)
+            });
+            return response.status == 200;
+        },
+
+        /**
+         * Remove a show from the favourites list.
+         * @param id
+         */
+        async removeFromFavourites(id: number): Promise<boolean>{
+            const response = await fetch(`${this.parent.baseUrl}/shows/favourites`,{
+                method: 'DELETE',
+                headers: this.parent.headers,
+                body: JSON.stringify({'id':id})
+            });
+            return response.status == 200;
+        },
+
+        /**
+         * Remove a show from the watchlist.
+         * @param id
+         */
+        async removeFromWatchlist(id: number): Promise<boolean>{
+            const response = await fetch(`${this.parent.baseUrl}/shows/watchlist`,{
+                method: 'DELETE',
+                headers: this.parent.headers,
+                body: JSON.stringify({'id':id})
+            });
+            return response.status == 200;
         }
+
     }.init(this)
 
 

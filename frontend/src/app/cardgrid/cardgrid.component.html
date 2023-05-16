@@ -1,0 +1,12 @@
+<div class="list-container">
+    <div class="title">
+        {{title}}
+    </div>
+    <div *ngIf="items.length > 0" #list class="list">
+        <app-card *ngFor="let item of items" [data]="item" [type]="type">
+        </app-card>
+    </div>
+    <div *ngIf="items.length == 0" class="empty">
+        No items to show :(    
+    </div>
+</div>

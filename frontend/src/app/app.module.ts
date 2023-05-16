@@ -9,8 +9,9 @@ import { LoginComponent } from './login/login.component';
 import { MobxAngularModule } from 'mobx-angular';
 import { BrowseComponent } from './browse/browse.component';
 import { MyListComponent } from './mylist/mylist.component';
-import { CardViewComponent } from './cardview/cardview.component';
+import { CardListComponent } from './cardlist/cardlist.component';
 import { CardComponent } from './card/card.component';
+import { CardGridComponent } from './cardgrid/cardgrid.component';
 
 @NgModule({
   declarations: [
@@ -19,8 +20,9 @@ import { CardComponent } from './card/card.component';
     LoginComponent,
     BrowseComponent,
     MyListComponent,
-    CardViewComponent,
-    CardComponent
+    CardListComponent,
+    CardComponent,
+    CardGridComponent
   ],
   imports: [
     MobxAngularModule,

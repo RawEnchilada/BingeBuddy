@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { computed } from 'mobx-angular';
 import api from 'src/api/api';
 
 @Component({
@@ -6,23 +7,10 @@ import api from 'src/api/api';
   templateUrl: './browse.component.html',
   styleUrls: ['./browse.component.css']
 })
-export class BrowseComponent implements OnInit {
+export class BrowseComponent{
     
     movies = api.movies;
     shows = api.shows;
-    
-
-
-    ngOnInit(): void {
-        if (history.scrollRestoration) {
-            history.scrollRestoration = 'manual';
-        } else {
-            window.onbeforeunload = function () {
-                window.scrollTo(0, 0);
-            }
-        }
-    }
-
 
 
 }

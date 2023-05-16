@@ -2,3 +2,14 @@
     margin-top: 2rem;
     overflow:hidden;
 }
+
+#expired-session-dialog{
+    box-shadow: 0px 0px 5px 3px var(--active-background);
+    border-width: 0;
+    border-radius: 5px;
+    background-color: var(--card-foreground);
+}
+
+#expired-session-dialog h1{
+    margin-top:0;
+}
