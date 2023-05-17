@@ -1,5 +1,5 @@
-<div class="card" [title]="fullTitle">
-    <img [src]="imagePath" alt="Avatar" class="avatar" height="200">
+<div class="card" [title]="fullTitle" [routerLink]="detailsUrl">
+    <img [src]="imagePath" alt="Poster" height="200">
     <div class="sidebar">
         <div class="list-button" [class.added]="isInWatchlist" (click)="toggleWatchlist()" [title]="isInWatchlist?'Remove from watchlist':'Add to watchlist'">
             <svg *ngIf="!isInWatchlist" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -10,9 +10,7 @@
             <svg *ngIf="isInFavourites" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </div>
         <div class="rating">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2 L15.09 8.09 L22 9 L16.5 14.5 L18.36 21 L12 17.77 L5.64 21 L7.5 14.5 L2 9 L8.91 8.09 L12 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(0,0,0,0)"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2 L15.09 8.09 L22 9 L16.5 14.5 L18.36 21 L12 17.77 L5.64 21 L7.5 14.5 L2 9 L8.91 8.09 L12 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(0,0,0,0)"/></svg>
             <div class="rating-value">
                 {{rating}}
             </div>

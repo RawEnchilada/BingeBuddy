@@ -12,6 +12,7 @@ import { MyListComponent } from './mylist/mylist.component';
 import { CardListComponent } from './cardlist/cardlist.component';
 import { CardComponent } from './card/card.component';
 import { CardGridComponent } from './cardgrid/cardgrid.component';
+import { DetailsComponent } from './details/details.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { CardGridComponent } from './cardgrid/cardgrid.component';
     MyListComponent,
     CardListComponent,
     CardComponent,
-    CardGridComponent
+    CardGridComponent,
+    DetailsComponent
   ],
   imports: [
     MobxAngularModule,

@@ -161,6 +161,25 @@ class API {
         },
 
         /**
+         * Get the details of a movie.
+         * @param movieId   The movie id to get details for.
+         */
+        async getDetails(movieId:number): Promise<any>{
+            const dresponse = await fetch(`${this.parent.baseUrl}/movie/${movieId}`,{
+                method: 'GET',
+                headers: this.parent.headers
+            });
+            const data = await dresponse.json();
+            const providers = await fetch(`${this.parent.baseUrl}/movie/${movieId}/watch/providers`,{
+                method: 'GET',
+                headers: this.parent.headers
+            });
+            const providersData = await providers.json();
+            data.providers = providersData.results;
+            return data;
+        },
+
+        /**
          * Get the list of top movies. 
          * @param page  The page number to get.
          */
@@ -298,7 +317,26 @@ class API {
         init(parent:API){
             this.parent = parent;
             return this;
-        },        
+        },    
+        
+        /**
+         * Get the details of a show.
+         * @param showId    The show id to get details for.
+         */
+        async getDetails(showId:number): Promise<any>{
+            const dresponse = await fetch(`${this.parent.baseUrl}/tv/${showId}`,{
+                method: 'GET',
+                headers: this.parent.headers
+            });
+            const data = await dresponse.json();
+            const providers = await fetch(`${this.parent.baseUrl}/tv/${showId}/watch/providers`,{
+                method: 'GET',
+                headers: this.parent.headers
+            });
+            const providersData = await providers.json();
+            data.providers = providersData.results;
+            return data;
+        },
 
         /**
          * Get the list of top shows.

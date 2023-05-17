@@ -1,0 +1,47 @@
+<div class="details-container">
+    <div *ngIf="data != null" class="details-grid">
+        <div class="backdrop"><img [src]="imagePath" alt="Banner"/></div>
+        <div class="title">{{title}}</div>
+        <div style="grid-row:2;grid-column:1/4;">{{data.overview}}</div>
+        <div *ngIf="mediaType == 'shows'" style="grid-row:3;grid-column:1;">
+            <div>First air date: {{data.first_air_date}}</div>
+            <div>Last air date: {{data.last_air_date}}</div>
+            <div>Number of seasons: {{data.number_of_seasons}}</div>
+        </div>
+        <div *ngIf="mediaType == 'movies'" style="grid-row:3;grid-column:1;">
+            <div>Release date: {{data.release_date}}</div>
+            <div>Runtime: {{data.runtime}} minutes</div>
+        </div>
+        <div class="ratings">
+            <svg viewBox="0 0 24 24"><path d="M12 2 L15.09 8.09 L22 9 L16.5 14.5 L18.36 21 L12 17.77 L5.64 21 L7.5 14.5 L2 9 L8.91 8.09 L12 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(0,0,0,0)"/></svg>
+            <div>Average rating: {{data.vote_average}}</div>
+            <div>Number of votes: {{data.vote_count}}</div>
+        </div> 
+        <div class="controls">
+            <div class="list-button" [class.added]="isInWatchlist" (click)="toggleWatchlist()" [title]="isInWatchlist?'Remove from watchlist':'Add to watchlist'">
+                <svg *ngIf="!isInWatchlist" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg *ngIf="isInWatchlist" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path fill="currentColor" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle fill="#fff" cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="list-button" [class.added]="isInFavourites" (click)="toggleFavourite()" [title]="isInFavourites?'Remove from favourites':'Add to favourites'">
+                <svg *ngIf="!isInFavourites" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg *ngIf="isInFavourites" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+        </div> 
+        <div class="watch-providers">
+            <h2>Watch providers</h2>
+            <div *ngIf="providers.length > 0" class="provder-list">
+                <div *ngFor="let provider of providers">
+                    <img [src]="toMiniImg(provider.logo_path)" alt="Provider logo"/>
+                    <div>{{provider.provider_name}}</div>
+                </div>
+            </div>
+            <div *ngIf="providers.length == 0">No providers found in your country.</div>
+        </div>
+    </div>
+    <div *ngIf="data != null && getMoreLikeThis != null">
+        <app-cardlist [sourceFunction]="getMoreLikeThis" [title]="'More Like This'" [type]="mediaType"></app-cardlist>
+    </div>
+    <div *ngIf="data == null">
+        <div>Media not found</div>  
+    </div>
+</div>

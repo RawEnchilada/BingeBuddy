@@ -10,4 +10,14 @@
     <div id="content">
         <router-outlet></router-outlet>
     </div>
+    <div id="footer">
+        <div (click)="openPage('https://www.themoviedb.org/')">
+            <label>Movie and TV show data is provided by TheMovieDB.org</label>
+            <img src="assets/tmdb-logo.svg" alt="TheMovieDB logo" />
+        </div>
+        <div (click)="openPage('https://www.justwatch.com/')">
+            <label>Streaming options are provided by JustWatch.com</label>
+            <img src="assets/JustWatch-logo.png" alt="JustWatch logo" />
+        </div>
+    </div>
 </div>

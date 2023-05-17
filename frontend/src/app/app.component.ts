@@ -42,4 +42,8 @@ export class AppComponent implements OnInit {
             }
         }).bind(this));
     }
+
+    openPage(page: string){
+        window.open(page, '_blank');
+    }
 }
