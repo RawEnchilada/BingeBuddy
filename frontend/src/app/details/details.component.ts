@@ -1,29 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DoCheck, ElementRef, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import api from 'src/api/api';
 import IList from 'src/store/ilist';
 import myList from 'src/store/mylists';
 import { SingleView } from '../baseClasses/singleview.component';
+import { CardsView } from '../baseClasses/cardsview.component';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css']
 })
-export class DetailsComponent extends SingleView implements OnInit {
+export class DetailsComponent extends SingleView implements OnInit, DoCheck{
     private mediaId: number = -1;
     mediaType: string = '';
     imagePath: string = "";
     title: string = "";
     providers: Array<any> = [];
   
+    @ViewChild('recommendationList', {static: false}) recommendationList: CardsView | null = null;
+
     constructor(private route: ActivatedRoute) {
         super();
     }
 
     getMoreLikeThis: (((page:number) => Promise<any>) | null) = null;
   
-    ngOnInit() {
+    loadData(){
         let id = this.route.snapshot.paramMap.get('id');
         let type = this.route.snapshot.paramMap.get('type');
         if(id != null && type != null){
@@ -49,11 +52,26 @@ export class DetailsComponent extends SingleView implements OnInit {
                     if(data.providers.HU){
                         this.providers = data.providers.HU.flatrate;
                     }
+                    this.recommendationList?.emptyList();
                     this.initLists(this.mediaType);
+                    this.recommendationList?.loadMore();
                 });
             }    
         }
     }
+
+
+    ngOnInit() {
+        this.loadData();
+    }
+
+
+    ngDoCheck(){
+        let newId = this.route.snapshot.paramMap.get('id');
+        if(newId != null && Number.parseInt(newId) != this.mediaId){
+            this.loadData();
+        }
+    }    
 
     toSmallImg(url: string | null): string{
         return (url&&url.length>0) ? `https://image.tmdb.org/t/p/w500${url}` : 'assets/missing.jpg'

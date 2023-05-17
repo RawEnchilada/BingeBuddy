@@ -22,11 +22,16 @@ export abstract class CardsView{
         makeObservable(this);
     }
 
+    public emptyList(){
+        this.items = [];
+        this.pagesLoaded = 0;
+        this.maxPages = 10;
+    }
 
     /**
      * Load more items.
      */
-    loadMore() {
+    public loadMore() {
         if (!this.isLoading && api.isAuthorized) {
             this.isLoading = true;
             if (this.sourceFunction != null && this.pagesLoaded < this.maxPages) {

@@ -32,7 +32,8 @@ export abstract class SingleView{
         this.getIsInFavourites();
     }
 
-    toggleWatchlist(){
+    toggleWatchlist(event:any){
+        event.stopPropagation();
         (async () => {
             if(this.isInWatchlist){
                 await this.watchlist.remove(this.data.id);
@@ -52,7 +53,8 @@ export abstract class SingleView{
         });
     }
 
-    toggleFavourite(){
+    toggleFavourite(event:any){
+        event.stopPropagation();
         (async () => {
             if(this.isInFavourites){
                 await this.favourites.remove(this.data.id);

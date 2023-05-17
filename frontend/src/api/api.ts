@@ -180,6 +180,20 @@ class API {
         },
 
         /**
+         * Search for movies.
+         * @param query The query to search for.
+         * @param page  The page number to get.
+         */
+        async search(query:string, page:number): Promise<any>{
+            const response = await fetch(`${this.parent.baseUrl}/search/movie?language=en-US&query=${query}&page=${page}`,{
+                method: 'GET',
+                headers: this.parent.headers
+            });
+            const data = await response.json();
+            return data;
+        },
+
+        /**
          * Get the list of top movies. 
          * @param page  The page number to get.
          */
@@ -335,6 +349,20 @@ class API {
             });
             const providersData = await providers.json();
             data.providers = providersData.results;
+            return data;
+        },
+
+        /**
+         * Search for a show.
+         * @param query The query to search for.
+         * @param page  The page number to get.
+         */
+        async search(query:string,page:number): Promise<any>{
+            const response = await fetch(`${this.parent.baseUrl}/search/tv?language=en-US&page=${page}&query=${query}`,{
+                method: 'GET',
+                headers: this.parent.headers
+            });
+            const data = await response.json();
             return data;
         },
 

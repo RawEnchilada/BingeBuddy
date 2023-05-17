@@ -13,6 +13,7 @@ import { CardListComponent } from './cardlist/cardlist.component';
 import { CardComponent } from './card/card.component';
 import { CardGridComponent } from './cardgrid/cardgrid.component';
 import { DetailsComponent } from './details/details.component';
+import { SearchComponent } from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { DetailsComponent } from './details/details.component';
     CardListComponent,
     CardComponent,
     CardGridComponent,
-    DetailsComponent
+    DetailsComponent,
+    SearchComponent
   ],
   imports: [
     MobxAngularModule,

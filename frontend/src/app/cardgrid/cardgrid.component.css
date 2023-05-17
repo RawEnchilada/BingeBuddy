@@ -1,0 +1,23 @@
+.grid-container{
+    color: var(--list-foreground);
+    margin:5% 10%;
+}
+
+.grid{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.grid>*{
+    /* needed in order to have same size cards in the list */
+    width:16rem;
+}
+
+.title{
+    font-size: 1.5em;
+    font-weight: 900;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+    margin-bottom: 2rem;
+}
