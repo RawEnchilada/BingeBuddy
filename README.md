@@ -65,3 +65,10 @@ Browse shows:
 
 Show details:
 ![Show details](docs/details.png)
+
+
+## <b>Credits</b>
+|||
+|---|---|
+|![TMDB](frontend/src/assets/tmdb-logo.svg)|This project uses the TMDB API to retrieve information about movies and TV shows. |
+|![JustWatch](frontend/src/assets/JustWatch-logo.png)|This project uses the JustWatch API to retrieve information about where to watch movies and TV shows. |
