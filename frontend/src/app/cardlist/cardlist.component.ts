@@ -3,6 +3,9 @@ import { computed, makeObservable, observable } from 'mobx';
 import api from 'src/api/api';
 import { CardsView } from '../baseClasses/cardsview.component';
 
+/**
+ * A horizontally scrollable list of cards.
+ */
 @Component({
   selector: 'app-cardlist',
   templateUrl: './cardlist.component.html',

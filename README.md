@@ -1,7 +1,10 @@
 # BingeBuddy
 
+BingeBuddy is a web application that allows you to keep track of your favorite TV shows and movies. It is built using Angular and Express.
 
-## <b>Backend</b>
+The backend is a proxy server that forwards requests to the TMDB API and keeps track of the user's watchlist and watched items. This is backend exists in order to avoid having to expose the TMDB API key to the frontend and to keep your viewing data completely private.
+
+## <b>Backend Installation</b>
 
 ### <b>Configuration</b>
 
@@ -11,51 +14,54 @@ The backend is configured using a config.json file, with the following parameter
 {
     "apiKey":"tmdb_v3_api_key_here",
     "password":"your_password_here",
+    "sourceUrl":"http://my_backend_host:8080",
     "targetUrl":"https://api.themoviedb.org/3",
-    "port": 8080,
-    "certificatePath": "some/where/certificate.pem",
-    "keyPath": "some/where/key.pem"
+    "port": 8080
 }
 ```
 
+### <b>Running the backend</b>
 
-### <b>Creating a new session token</b>
-
-To create a new session token, send a POST request to the `/newSession` route with a JSON body containing a passwordHash field:
-
-```bash
-
-curl -X POST -H "Content-Type: application/json" \
--d '{"passwordHash":"your_password_hash_here"}' \
-http://your_server_url_here/newSession
-```
-
-The server will respond with a JSON object containing a sessionToken field:
-
-```json
-{
-    "sessionToken": "generated_session_token_here"
-}
-```
-
-Save the sessionToken value, as you will need to include it in future requests.
-
-### <b>Redirecting to a new URL</b>
-
-To redirect to a new URL, send a GET request to the `/` route with a session-token header set to the value of the previously generated session token:
+To run the backend, simply run the following command:
 
 ```bash
-
-curl -H "session-token: generated_session_token_here" \
-http://your_server_url_here/
+cd backend;
+npm install;
+npm run start
 ```
 
-The server will respond with a 303 See Other response, with a Location header set to the new URL:
+## <b>Frontend Installation</b>
+
+### <b>Configuration</b>  
+
+The frontend is configured using an environment.ts file in frontend/environment.ts with the following content:
+
+```typescript
+export const environment = {
+    apiUrl: 'http://my_backend_host:8080',
+};
+```
+
+### <b>Running the frontend</b>
+
+To run the frontend, simply run the following command:
 
 ```bash
-
-HTTP/1.1 303 See Other
-Location: https://your_target_url_here.com/path/to/requested/resource
+cd frontend;
+npm install;
+npm run build;
+serve -s dist/binge-buddy -l 8081
 ```
 
-Follow the Location header to the new URL. If the session-token header value is not valid, you will receive a 403 Forbidden response.
+Using serve is optional, you can also use any other webserver to serve the files in the dist/binge-buddy folder.
+
+## <b>Screenshots</b>
+
+Login screen:
+![Login screen](docs/login.png)
+
+Browse shows:
+![Browse shows](docs/browse.png)
+
+Show details:
+![Show details](docs/details.png)

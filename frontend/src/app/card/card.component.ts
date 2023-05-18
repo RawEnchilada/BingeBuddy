@@ -5,6 +5,10 @@ import IList from 'src/store/ilist';
 import myList from 'src/store/mylists';
 import { SingleView } from '../baseClasses/singleview.component';
 
+
+/**
+ * Small card showing data of a single movie or show.
+ */
 @Component({
   selector: 'app-card',
   templateUrl: './card.component.html',

@@ -2,7 +2,9 @@ import { CanActivateFn } from '@angular/router';
 import api from 'src/api/api';
 
 
-
+/**
+ * Allow access to the content pages only if the user is authorized.
+ */
 export function contentGuard(): CanActivateFn {
     return () => {
         if (api.isAuthorized) {
@@ -14,7 +16,9 @@ export function contentGuard(): CanActivateFn {
         }
     }
 }
-
+/**
+ * Allow access to the login page only if the user is not already authorized.
+ */
 export function loginGuard(): CanActivateFn {
     return () => {
         if (!api.isAuthorized) {

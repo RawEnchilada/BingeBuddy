@@ -1,5 +1,8 @@
 const fs = require('fs');
 
+/**
+ * Represents the configuration of the application.
+ */
 class Configuration {
     constructor(apiKey, password, sourceUrl, targetUrl, port, certificatePath, keyPath) {
         this.apiKey = apiKey;
@@ -10,13 +13,16 @@ class Configuration {
         }
         this.targetUrl = targetUrl;
         this.port = port;
+        // TODO: Validate certificate and key paths to allow use of HTTPS.
         this.certificatePath = certificatePath;
         this.keyPath = keyPath;
-        this.requestToken = null;
         this.authorized = false;
-        this.tmdbSession = null;
     }
 
+    /**
+     * Loads a configuration from a JSON file.
+     * @param path The path to the JSON file.
+     */
     static fromFile(path) {
         try {
             const jsonString = fs.readFileSync(path, 'utf8');

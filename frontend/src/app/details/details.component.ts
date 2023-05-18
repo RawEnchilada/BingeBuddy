@@ -6,6 +6,10 @@ import myList from 'src/store/mylists';
 import { SingleView } from '../baseClasses/singleview.component';
 import { CardsView } from '../baseClasses/cardsview.component';
 
+
+/**
+ * Component for showing all details of a single movie or show, with recommendations.
+ */
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
@@ -26,6 +30,9 @@ export class DetailsComponent extends SingleView implements OnInit, DoCheck{
 
     getMoreLikeThis: (((page:number) => Promise<any>) | null) = null;
   
+    /**
+     * Loads data from the API.
+     */
     loadData(){
         let id = this.route.snapshot.paramMap.get('id');
         let type = this.route.snapshot.paramMap.get('type');
@@ -60,12 +67,12 @@ export class DetailsComponent extends SingleView implements OnInit, DoCheck{
         }
     }
 
-
+    //Load the data initially
     ngOnInit() {
         this.loadData();
     }
 
-
+    //Refresh the data if the url changes
     ngDoCheck(){
         let newId = this.route.snapshot.paramMap.get('id');
         if(newId != null && Number.parseInt(newId) != this.mediaId){

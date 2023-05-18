@@ -3,6 +3,9 @@ import api, { SessionStatus } from 'src/api/api';
 import { computed } from 'mobx-angular';
 import { autorun } from 'mobx';
 
+/**
+ * Main component of the application.
+ */
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -16,14 +19,16 @@ export class AppComponent implements OnInit {
 
     @ViewChild('dialog', {static: false}) dialog!: ElementRef;
 
-
+    /**
+     * Navigate to the login page.
+     */
     toLoginView(){
         this.dialog.nativeElement.close();
         window.location.href = '/';
     }
 
     ngOnInit(){
-
+        // Reset scroll position on page change
         if (history.scrollRestoration) {
             history.scrollRestoration = 'manual';
         } else {
@@ -31,7 +36,7 @@ export class AppComponent implements OnInit {
                 window.scrollTo(0, 0);
             }
         }
-
+        // Check session status and redirect to login if not authorized
         api.addSessionListener(((valid: boolean) => {
             if(this.dialog){
                 if(!valid){
@@ -43,6 +48,10 @@ export class AppComponent implements OnInit {
         }).bind(this));
     }
 
+    /**
+     * Open the given page in a new tab.
+     * @param page The page to open.
+     */
     openPage(page: string){
         window.open(page, '_blank');
     }

@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import api from 'src/api/api';
 
+/**
+ * Search page containing a grid of the search results.
+ */
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',

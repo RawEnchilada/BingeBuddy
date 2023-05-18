@@ -2,6 +2,10 @@ import { Component, ElementRef, Input, ViewChild } from "@angular/core";
 import { makeObservable, observable } from "mobx";
 import api from "src/api/api";
 
+
+/**
+ * Base class for listing multiple cards.
+ */
 @Component({
   selector: 'app-cardsview',
   templateUrl: './cardsview.component.html',
@@ -22,6 +26,9 @@ export abstract class CardsView{
         makeObservable(this);
     }
 
+    /**
+     * Empty the list.
+     */
     public emptyList(){
         this.items = [];
         this.pagesLoaded = 0;

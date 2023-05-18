@@ -3,6 +3,9 @@ import { makeObservable } from 'mobx';
 import { observable } from 'mobx-angular';
 import { CardsView } from '../baseClasses/cardsview.component';
 
+/**
+ * A vertically scrollable grid of cards.
+ */
 @Component({
   selector: 'app-cardgrid',
   templateUrl: './cardgrid.component.html',

@@ -14,7 +14,9 @@ const headers = {
 };
 
 
-
+/**
+ * Returns the available methods and headers for the API, in the headers.
+ */
 app.options('*', (req, res) => {
     res.set(headers).status(200).json({'result':'OK'});
 });
@@ -22,6 +24,14 @@ app.options('*', (req, res) => {
 
 
 //Session management routes.
+/**
+ * Checks a session's status.
+ * @headerParam {String} session-token : The session token to check.
+ * @returns 200 {'status':'active'} if the session is active.
+ * @returns 403 {'status':'expired'} if the session is expired.
+ * @returns 403 {'status':'invalid'} if the session is invalid.
+ * @returns 403 {'error':'Session token not provided'} if no session token is provided.
+ */
 app.get('/session', (req, res) => {
     const sessionToken = req.headers['session-token'];
     if (sessionToken == null) {
@@ -49,6 +59,12 @@ app.get('/session', (req, res) => {
     }
 });
 
+/**
+ * Creates a new session.
+ * @bodyParam {String} passwordHash : The hash of the password to use for the session.
+ * @returns 200 {sessionToken:String} : The session token on successful login.
+ * @returns 403 {error:String} : If the password is incorrect.
+ */
 app.post('/session', (req, res) => {
     const passwordHash = req.body.passwordHash;
 
@@ -64,6 +80,13 @@ app.post('/session', (req, res) => {
     }
 });
 
+/**
+ * Revokes a session.
+ * @headerParam {String} session-token : The session token to revoke.
+ * @returns 200 {'result':'Session revoked'} if the session was revoked.
+ * @returns 403 {'error':'Session token not provided'} if no session token is provided.
+ * @returns 403 {'error':'Invalid session token'} if the session token is invalid.
+ */
 app.delete('/session', (req, res) => {
     const sessionToken = req.headers['session-token'];
     if (sessionToken == null) {
@@ -82,6 +105,13 @@ app.delete('/session', (req, res) => {
 });
 
 //Session verification
+/**
+ * Verifies a session, then passes the request to the next handler.
+ * @headerParam {String} session-token : The session token to verify.
+ * @returns 403 {'error':'Session token not provided'} if no session token is provided.
+ * @returns 403 {'error':'Session token expired'} if the session token is expired.
+ * @returns 403 {'error':'Invalid session token'} if the session token is invalid.
+ */
 app.all('*', (req, res, next) => {
     const sessionToken = req.headers['session-token'];
     if (sessionToken == null) {
@@ -108,6 +138,12 @@ app.all('*', (req, res, next) => {
 });
 
 //List management routes.
+/**
+ * Returns the items in a list, passes to next handler if the list does not exist.
+ * @routeParam {String} mediaType : The type of media to get the list of, (movies,shows)
+ * @routeParam {String} listType : The type of list to get, (favourites,watchlist)
+ * @returns 200 {Array} : The items in the list.
+ */
 app.get('/:mediaType/:listType', async (req, res, next) => {
     if (req.params.mediaType in myList && req.params.listType in myList[req.params.mediaType]) {
         const items = myList[req.params.mediaType][req.params.listType].items;
@@ -118,6 +154,14 @@ app.get('/:mediaType/:listType', async (req, res, next) => {
     }
 });
 
+/**
+ * Adds an item to a list, passes to next handler if the list does not exist.
+ * @routeParam {String} mediaType : The type of media to add the item to, (movies,shows)
+ * @routeParam {String} listType : The type of list to add the item to, (favourites,watchlist)
+ * @bodyParam {String} id : The id of the item to add to the list.
+ * @returns 200 {'result':'OK'} : If the item was added to the list.
+ * @returns 400 {'error':'No id provided'} : If no id was provided.
+ */
 app.post('/:mediaType/:listType', async (req, res, next) => {
     if (req.params.mediaType in myList && req.params.listType in myList[req.params.mediaType]) {
         if(req.body.id == null){
@@ -133,6 +177,14 @@ app.post('/:mediaType/:listType', async (req, res, next) => {
     }
 });
 
+/**
+ * Removes an item from a list, passes to next handler if the list does not exist.
+ * @routeParam {String} mediaType : The type of media to remove the item from, (movies,shows)
+ * @routeParam {String} listType : The type of list to remove the item from, (favourites,watchlist)
+ * @bodyParam {String} id : The id of the item to remove from the list.
+ * @returns 200 {'result':'OK'} : If the item was removed from the list.
+ * @returns 400 {'error':'No id provided'} : If no id was provided.
+ */
 app.delete('/:mediaType/:listType', async (req, res, next) => {
     if (req.params.mediaType in myList && req.params.listType in myList[req.params.mediaType]) {
         if(req.body.id == null){
@@ -149,6 +201,10 @@ app.delete('/:mediaType/:listType', async (req, res, next) => {
 });
 
 //Relay all other requests to the target URL.
+/**
+ * Relays all other requests to the target URL.
+ * @returns any {Object} : The response from the target URL.
+ */
 app.get('*', async (req, res) => {
     let redirectUrl = `${config.targetUrl}${req.originalUrl.replace(config.sourceUrl, '')}`;
     if(redirectUrl.includes('?')){

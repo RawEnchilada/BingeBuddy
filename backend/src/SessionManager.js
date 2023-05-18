@@ -14,12 +14,19 @@ class SessionToken {
         this.expiration = expiration;
     }
 }
-
+/**
+ * Manages sessions.
+ */
 class SessionManager {
     constructor() {
         this.authorizedSessions = [];
     }
 
+    /**
+     * Checks a session token's status.
+     * @param {String} token : The session token to check.
+     * @returns {SessionStatus} The status of the session.
+     */
     checkToken(token) {
         const session = this.authorizedSessions.find(element => element.token === token);
         if (!session) {
@@ -32,6 +39,10 @@ class SessionManager {
         }
     }
 
+    /**
+     * Creates a new session.
+     * @returns {String} The session token.
+     */
     createSession() {
         const sessionToken = crypto.randomBytes(32).toString('base64');
         const expiration = new Date();
@@ -41,6 +52,11 @@ class SessionManager {
         return sessionToken;
     }
 
+    /**
+     * Revokes a session.
+     * @param {String} token : The session token to revoke.
+     * @returns {Boolean} True if the session was revoked, false if the session was not found.
+     */
     revokeSession(token) {
         const index = this.authorizedSessions.findIndex(element => element.token === token);
         if (index === -1) {

@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import api from 'src/api/api';
 
+/**
+ * Simple login page.
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -11,10 +14,16 @@ export class LoginComponent {
     error: string = "";
     showPassword: boolean = false;
 
+    /**
+     * Toggle the password visibility.
+     */
     toggleShowPassword() {
         this.showPassword = !this.showPassword;
     }
 
+    /**
+     * Try to login with the given password.
+     */
     login() {
         if (this.password.length < 1) {
             this.error = "Please enter a password";
