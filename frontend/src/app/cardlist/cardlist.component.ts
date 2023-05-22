@@ -18,15 +18,18 @@ export class CardListComponent extends CardsView implements AfterViewInit, OnDes
     @observable atStart: boolean = true;
     @observable atEnd: boolean = false;
 
+    private scrolled(){
+        //load more if we're near the end
+        if (this.list.nativeElement.scrollLeft + this.list.nativeElement.clientWidth >= this.list.nativeElement.scrollWidth - 250) {
+            this.loadMore();
+        }
+    }
+
     private scroll(amount:number) {
         this.list.nativeElement.scroll({
             left: this.list.nativeElement.scrollLeft + amount,
             behavior: 'smooth'
         });
-        //load more if we're near the end
-        if (this.list.nativeElement.scrollLeft + this.list.nativeElement.clientWidth >= this.list.nativeElement.scrollWidth - 250) {
-            this.loadMore();
-        }
         if(this.list.nativeElement.scrollLeft <= 100){
             this.atStart = true;
         } else {
@@ -37,6 +40,7 @@ export class CardListComponent extends CardsView implements AfterViewInit, OnDes
         } else {
             this.atEnd = false;
         }
+        this.scrolled();
     }
 
     /**
@@ -48,6 +52,9 @@ export class CardListComponent extends CardsView implements AfterViewInit, OnDes
             evt.preventDefault();
             const amountX = evt.deltaY * 2;
             this.scroll(amountX);
+        }
+        else{
+            this.scrolled();
         }
     }
 
