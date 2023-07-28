@@ -2,7 +2,7 @@
 
 BingeBuddy is a web application that allows you to keep track of your favorite TV shows and movies. It is built using Angular and Express.
 
-The backend is a proxy server that forwards requests to the TMDB API and keeps track of the user's watchlist and watched items. This is backend exists in order to avoid having to expose the TMDB API key to the frontend and to keep your viewing data completely private.
+The backend is a proxy server that forwards requests to the TMDB API and keeps track of the user's watchlist and watched items. This backend exists in order to avoid having to expose the TMDB API key to the frontend and to keep your viewing data completely private.
 
 ## <b>Backend Installation</b>
 
